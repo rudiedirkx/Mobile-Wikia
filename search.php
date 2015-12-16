@@ -34,11 +34,7 @@ include 'tpl.header.php';
 
 <h2>Search an article</h2>
 
-<form method="get" action="">
-	<input type="hidden" name="wiki" value="<?= html(get_wiki()) ?>" />
-	<p>Search an article: <input type="search" name="search" value="<?= html($search) ?>" /></p>
-	<p><button>Search!</button></p>
-</form>
+<div class="block-search"><? include 'tpl.search.php' ?></div>
 
 <?php
 

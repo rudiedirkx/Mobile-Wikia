@@ -17,13 +17,19 @@
 		padding: 6px;
 	}
 	button {
-		padding: 6px 15px;
+		padding: 4px 12px;
 	}
 	.result-item + .result-item {
 		margin-top: .5em;
 	}
 	.to-wikia {
 		margin-bottom: 0;
+	}
+	.inline-search p {
+		display: inline-block;
+	}
+	.inline-search input {
+		width: 6em;
 	}
 	</style>
 </head>

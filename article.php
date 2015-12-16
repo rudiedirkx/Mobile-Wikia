@@ -18,6 +18,8 @@ include 'tpl.header.php';
 	</a>
 </p>
 
+<div class="inline-search"><? include 'tpl.search.php' ?></div>
+
 <? foreach ($response->sections as $section): ?>
 	<? include 'tpl.article-section.php' ?>
 <? endforeach ?>
