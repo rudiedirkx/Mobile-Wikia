@@ -1,5 +1,24 @@
 <?php
 
+function requireParams($param1) {
+	$want = array_flip(func_get_args());
+	$have = array_filter($_GET);
+	$miss = array_diff_key($want, $have);
+	if ( $miss ) {
+		return missingParams(array_keys($miss));
+	}
+
+	$values = array();
+	foreach ($want as $name => $foo) {
+		$values[] = $have[$name];
+	}
+	return $values;
+}
+
+function missingParams($params) {
+	exit('Missing params: ' . html(implode(', ', $params)));
+}
+
 function html( $text ) {
 	return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }

@@ -27,17 +27,21 @@ include 'tpl.header.php';
 
 	<ul>
 		<? foreach ($results as $item): ?>
-			<li>
+			<li class="result-item">
 				<div class="title">
-					<a href="search.php?wiki=<?= urlencode($item->machine_name) ?>"><?= html($item->title) ?></a>
+					<a href="search.php?wiki=<?= urlencode($item->machine_name) ?>">
+						<?= html($item->title) ?>
+					</a>
 				</div>
-				<div class="machine-name"><?= html($item->machine_name) ?></div>
+				<div class="machine-name">
+					<?= html($item->machine_name) ?>
+				</div>
 			</li>
 		<? endforeach ?>
 	</ul>
 <? endif ?>
 
-<h2>Search</h2>
+<h2>Search a wiki</h2>
 
 <form method="get" action="">
 	<p>Search a wiki: <input type="search" name="search" value="<?= html($search) ?>" /></p>
