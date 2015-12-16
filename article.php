@@ -23,3 +23,14 @@ include 'tpl.header.php';
 <? foreach ($response->sections as $section): ?>
 	<? include 'tpl.article-section.php' ?>
 <? endforeach ?>
+
+<hr />
+
+<details>
+	<summary>Debug</summary>
+	<pre><?= html(print_r($response, 1)) ?></pre>
+</details>
+
+<?php
+
+include 'tpl.footer.php';
