@@ -2,27 +2,30 @@
 
 require 'inc.bootstrap.php';
 
-list(, $id, $machineName) = requireParams('wiki', 'id', 'name');
+list(, $title) = requireParams('wiki', 'title');
 
-$response = wikia_get('Articles/AsSimpleJson', array(
-	'id' => $id,
+$response = wiki_query(array(
+	'titles' => $title,
+	'prop' => 'revisions',
+	'rvprop' => 'content',
 ), $error, $info);
-$title = $response->sections[0]->title;
+$page = reset($response['pages']);
+$content = $page['revisions'][0]['*'];
 
 include 'tpl.header.php';
 
 ?>
 <p class="to-wikia">
-	<a href="http://<?= urlencode(get_wiki()) ?>.wikia.com/wiki/<?= urlencode($machineName) ?>">
+	<a href="http://<?= urlencode(get_wiki()) ?>.wikia.com/wiki/<?= urlencode(str_replace(' ', '_', $title)) ?>">
 		Go to Wikia
 	</a>
 </p>
 
 <div class="inline-search"><? include 'tpl.search.php' ?></div>
 
-<? foreach ($response->sections as $section): ?>
-	<? include 'tpl.article-section.php' ?>
-<? endforeach ?>
+<h1><?= html($title) ?></h1>
+
+<?= wiki_parse($content)->render() ?>
 
 <hr />
 

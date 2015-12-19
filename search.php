@@ -23,7 +23,7 @@ include 'tpl.header.php';
 		<? foreach ($results as $item): ?>
 			<li class="result-item">
 				<div class="title">
-					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&id=<?= html($item->id) ?>&name=<?= html(basename($item->url)) ?>">
+					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&title=<?= urlencode($item->title) ?>">
 						<?= html($item->title) ?>
 					</a>
 				</div>

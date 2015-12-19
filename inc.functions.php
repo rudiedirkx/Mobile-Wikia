@@ -1,5 +1,46 @@
 <?php
 
+use rdx\wikiparser\Document;
+use rdx\wikiparser\Parser;
+use rdx\wikiparser\Linker;
+
+class MobileWikiaLinker extends Linker {
+	public function articleURL( $article ) {
+		return 'article.php?wiki=' . get_wiki() . '&title=' . ucfirst($article);
+	}
+}
+
+function wiki_parse( $content ) {
+	$document = new Document(
+		new Parser,
+		new MobileWikiaLinker
+	);
+
+	$document->parseSimple($content, array(
+		'Quote' => function($properties) {
+			return '<blockquote><p>' . $properties[0] . '</p><p><em>' . $properties[1] . '</em></p></blockquote>';
+		},
+		'pic' => function($properties) {
+			return ' &lt;' . $properties[1] . '&gt; ';
+		},
+		'Recipe' => function($properties) {
+			$input = array();
+			foreach (array('', '1', '2', '3', '4') as $name) {
+				if ( isset($properties['item' . $name]) ) {
+					$count = isset($properties['count' . $name]) ? ' x' . $properties['count' . $name] : '';
+					$input[] = $properties['item' . $name] . $count;
+				}
+			}
+			$input = array_merge($input, array_keys(array_filter($properties, function($value) {
+				return $value === 'yes';
+			})));
+			return '<p>&lt;' . implode(' + ', $input) . ' = ' . $properties['result'] . '&gt;</p> ';
+		},
+	));
+
+	return $document;
+}
+
 function requireParams($param1) {
 	$want = array_flip(func_get_args());
 	$have = array_filter($_GET);
@@ -36,8 +77,21 @@ function get_wiki() {
 	}
 }
 
+function wiki_query( $query, &$error = null, &$info = null ) {
+	$url = wikia_url('api.php', $query + array(
+		'action' => 'query',
+		'format' => 'json',
+	));
+
+	$ch = wikia_curl($url, 'GET', $info);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-agent: Mobile Wikia'));
+
+	$response = wikia_response($ch, $error, $info);
+	return $response['query'];
+}
+
 function wikia_get( $resource, $query = null, &$error = null, &$info = null ) {
-	$url = wikia_url($resource, $query, $info);
+	$url = wikia_url('api/v1/' . $resource, $query);
 
 	$ch = wikia_curl($url, 'GET', $info);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-agent: Mobile Wikia'));
@@ -46,9 +100,9 @@ function wikia_get( $resource, $query = null, &$error = null, &$info = null ) {
 	return $response;
 }
 
-function wikia_url( $resource, $query = null, $info = null ) {
+function wikia_url( $resource, $query = null ) {
 	$wiki = get_wiki() ? get_wiki() : 'www';
-	$url = 'http://' . $wiki . '.wikia.com/api/v1/' . $resource;
+	$url = 'http://' . $wiki . '.wikia.com/' . $resource;
 	$query && $url .= '?' . http_build_query($query);
 	return $url;
 }
@@ -84,10 +138,10 @@ function wikia_response( $ch, &$error = null, &$info = null ) {
 	$info['response'] = $body;
 	$info['error'] = '';
 	if ( $error ) {
-		$info['error'] = ($json = @json_decode($body)) ? $json : null;
+		$info['error'] = ($json = @json_decode($body, true)) ? $json : null;
 	}
 
-	$response = $success ? @json_decode($body) : false;
+	$response = $success ? @json_decode($body, true) : false;
 
 	return $response;
 }
