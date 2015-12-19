@@ -10,12 +10,14 @@ if ( $search = trim(@$_GET['search']) ) {
 		'limit' => 10,
 		'query' => $search,
 	), $error, $info);
-	$results = $response->items;
+	$results = $response['items'];
 }
 
 include 'tpl.header.php';
 
 ?>
+<h1><?= html(get_wiki()) ?></h1>
+
 <? if ($search): ?>
 	<h2>Results</h2>
 
@@ -23,8 +25,8 @@ include 'tpl.header.php';
 		<? foreach ($results as $item): ?>
 			<li class="result-item">
 				<div class="title">
-					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&title=<?= urlencode($item->title) ?>">
-						<?= html($item->title) ?>
+					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&title=<?= urlencode($item['title']) ?>">
+						<?= html($item['title']) ?>
 					</a>
 				</div>
 			</li>

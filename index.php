@@ -8,14 +8,15 @@ if ( $search = trim(@$_GET['search']) ) {
 		'limit' => 10,
 		'query' => $search,
 	), $error, $info);
-	$results = $response->items;
+	$results = $response['items'];
 
-	foreach ( $results as $item ) {
-		$item->machine_name = substr(
-			$item->url,
-			$p1 = strpos($item->url, '//') + 2,
-			strpos($item->url, '.') - $p1
+	foreach ( $results as &$item ) {
+		$item['machine_name'] = substr(
+			$item['url'],
+			$p1 = strpos($item['url'], '//') + 2,
+			strpos($item['url'], '.') - $p1
 		);
+		unset($item);
 	}
 }
 
@@ -29,12 +30,12 @@ include 'tpl.header.php';
 		<? foreach ($results as $item): ?>
 			<li class="result-item">
 				<div class="title">
-					<a href="search.php?wiki=<?= urlencode($item->machine_name) ?>">
-						<?= html($item->title) ?>
+					<a href="search.php?wiki=<?= urlencode($item['machine_name']) ?>">
+						<?= html($item['title']) ?>
 					</a>
 				</div>
 				<div class="machine-name">
-					<?= html($item->machine_name) ?>
+					<?= html($item['machine_name']) ?>
 				</div>
 			</li>
 		<? endforeach ?>
