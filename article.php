@@ -16,21 +16,23 @@ $content = $page['revisions'][0]['*'];
 $html = $content;
 $html = preg_replace('#</?noscript>#', '', $html);
 $html = preg_replace('#<(script)[\s\S]+?</\1>#', '', $html);
+$html = preg_replace('#href="/wiki/([^"]+)#', 'href="article.php?wiki=' . get_wiki() . '&title=$1', $html);
+// $html = preg_replace('# style=".+?"#', '', $html);
 
 include 'tpl.header.php';
 
 ?>
 <h1><?= html(get_wiki()) ?></h1>
 
+<div class="inline-search"><? include 'tpl.search.php' ?></div>
+
+<h1 class="article-title"><?= html($title) ?></h1>
+
 <p class="to-wikia">
 	<a href="http://<?= urlencode(get_wiki()) ?>.wikia.com/wiki/<?= urlencode(str_replace(' ', '_', $title)) ?>">
 		Go to Wikia
 	</a>
 </p>
-
-<div class="inline-search"><? include 'tpl.search.php' ?></div>
-
-<h1><?= html($title) ?></h1>
 
 <?= $html ?>
 

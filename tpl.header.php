@@ -22,8 +22,11 @@
 	.result-item + .result-item {
 		margin-top: .5em;
 	}
+	.article-title {
+		margin-bottom: .25em;
+	}
 	.to-wikia {
-		margin-bottom: 0;
+		margin-top: 0;
 	}
 	.inline-search p {
 		display: inline-block;
@@ -32,6 +35,9 @@
 		width: 6em;
 	}
 	img[src^="data:"][data-image-key] {
+		display: none;
+	}
+	.editsection {
 		display: none;
 	}
 	</style>
