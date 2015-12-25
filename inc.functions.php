@@ -1,16 +1,18 @@
 <?php
 
-use rdx\wikiparser\Document;
-use rdx\wikiparser\Parser;
-use rdx\wikiparser\Linker;
+// use rdx\wikiparser\Document;
+// use rdx\wikiparser\Parser;
+// use rdx\wikiparser\Linker;
 
-class MobileWikiaLinker extends Linker {
-	public function articleURL( $article ) {
-		return 'article.php?wiki=' . get_wiki() . '&title=' . ucfirst($article);
-	}
-}
+// class MobileWikiaLinker extends Linker {
+// 	public function articleURL( $article ) {
+// 		return 'article.php?wiki=' . get_wiki() . '&title=' . ucfirst($article);
+// 	}
+// }
 
 function wiki_parse( $content ) {
+	return $content;
+
 	$document = new Document(
 		new Parser,
 		new MobileWikiaLinker

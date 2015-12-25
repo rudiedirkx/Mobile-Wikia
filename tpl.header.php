@@ -31,6 +31,9 @@
 	.inline-search input {
 		width: 6em;
 	}
+	img[src^="data:"][data-image-key] {
+		display: none;
+	}
 	</style>
 </head>
 
