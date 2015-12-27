@@ -24,7 +24,12 @@ $content = $page['revisions'][0]['*'];
 $html = $content;
 $html = preg_replace('#</?noscript>#', '', $html);
 $html = preg_replace('#<(script)[\s\S]+?</\1>#', '', $html);
-$html = preg_replace('#href="/wiki/([^"]+)#', 'href="article.php?wiki=' . get_wiki() . '&title=$1', $html);
+$html = preg_replace_callback('#href="/wiki/([^"]+)#', function($match) {
+	$titles = explode('?', $match[1]);
+	$title = $titles[0];
+
+	return 'href="article.php?wiki=' . get_wiki() . '&title=' . urlencode($title);
+}, $html);
 // $html = preg_replace('# style=".+?"#', '', $html);
 
 if ( preg_match('#^REDIRECT (.+)$#', trim(strip_tags($html)), $match) ) {
