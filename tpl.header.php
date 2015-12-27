@@ -28,11 +28,23 @@
 	.to-wikia {
 		margin-top: 0;
 	}
-	.inline-search p {
-		display: inline-block;
+	.inline-search form {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+	}
+	.inline-search p.input {
+		-webkit-box-flex: 1;
+		flex: 1;
+	}
+	.inline-search label {
+		display: none;
 	}
 	.inline-search input {
-		width: 6em;
+		width: 95%;
+	}
+	button:default {
+		font-weight: bold;
 	}
 	img[src^="data:"][data-image-key] {
 		display: none;
