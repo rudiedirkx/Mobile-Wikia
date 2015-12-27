@@ -11,6 +11,13 @@ input, textarea, select {
 button {
 	padding: 4px 12px;
 }
+table {
+	border-collapse: collapse;
+}
+td, th {
+	border: solid 1px #aaa;
+	padding: 3px;
+}
 .result-item + .result-item {
 	margin-top: .5em;
 }
