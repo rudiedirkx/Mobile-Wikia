@@ -20,6 +20,8 @@ if ( $search = trim(@$_GET['search']) ) {
 	}
 }
 
+$_title = 'Search wiki';
+$search and $_title .= ': ' . $search;
 include 'tpl.header.php';
 
 ?>

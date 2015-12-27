@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Wikia</title>
+	<title><?= @$_title ? html($_title) . ' - ' : '' ?>Wikia</title>
 	<style>
 	html {
 		font-size: 20px;

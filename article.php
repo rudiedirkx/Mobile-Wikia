@@ -35,6 +35,7 @@ if ( preg_match('#^REDIRECT (.+)$#', trim(strip_tags($html)), $match) ) {
 	exit;
 }
 
+$_title = $title;
 include 'tpl.header.php';
 
 ?>

@@ -13,6 +13,8 @@ if ( $search = trim(@$_GET['search']) ) {
 	$results = $response['items'];
 }
 
+$_title = 'Search article';
+$search and $_title .= ': ' . $search;
 include 'tpl.header.php';
 
 ?>
