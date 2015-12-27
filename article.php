@@ -17,6 +17,7 @@ if ( isset($response['normalized'][0]['to']) ) {
 	));
 	exit;
 }
+
 $page = reset($response['pages']);
 $content = $page['revisions'][0]['*'];
 
@@ -25,6 +26,14 @@ $html = preg_replace('#</?noscript>#', '', $html);
 $html = preg_replace('#<(script)[\s\S]+?</\1>#', '', $html);
 $html = preg_replace('#href="/wiki/([^"]+)#', 'href="article.php?wiki=' . get_wiki() . '&title=$1', $html);
 // $html = preg_replace('# style=".+?"#', '', $html);
+
+if ( preg_match('#^REDIRECT (.+)$#', trim(strip_tags($html)), $match) ) {
+	do_redirect('article', array(
+		'wiki' => get_wiki(),
+		'title' => $match[1],
+	));
+	exit;
+}
 
 include 'tpl.header.php';
 
