@@ -10,6 +10,13 @@ $response = wiki_query(array(
 	'rvprop' => 'content',
 	'rvparse' => 1,
 ), $error, $info);
+if ( isset($response['normalized'][0]['to']) ) {
+	do_redirect('article', array(
+		'wiki' => get_wiki(),
+		'title' => $response['normalized'][0]['to'],
+	));
+	exit;
+}
 $page = reset($response['pages']);
 $content = $page['revisions'][0]['*'];
 

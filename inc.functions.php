@@ -43,6 +43,17 @@ function wiki_parse( $content ) {
 	return $document;
 }
 
+function get_url( $path, $query = array() ) {
+	$query = $query ? '?' . http_build_query($query) : '';
+	$path = $path ? $path . '.php' : basename($_SERVER['SCRIPT_NAME']);
+	return $path . $query;
+}
+
+function do_redirect( $path, $query = array() ) {
+	$url = get_url($path, $query);
+	header('Location: ' . $url);
+}
+
 function requireParams($param1) {
 	$want = array_flip(func_get_args());
 	$have = array_filter($_GET);
