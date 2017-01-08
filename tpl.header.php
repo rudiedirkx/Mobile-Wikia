@@ -10,6 +10,8 @@
 
 <body>
 
+<p><a href="/">Index</a></p>
+
 </body>
 
 </html>

@@ -11,6 +11,10 @@ if ( $search = trim(@$_GET['search']) ) {
 		'query' => $search,
 	), $error, $info);
 	$results = $response['items'];
+	foreach ($results as &$result) {
+		$result['name'] = ($p = strpos($result['title'], '#')) ? substr($result['title'], 0, $p) : $result['title'];
+		unset($result);
+	}
 }
 
 $_title = 'Search article';
@@ -27,7 +31,7 @@ include 'tpl.header.php';
 		<? foreach ($results as $item): ?>
 			<li class="result-item">
 				<div class="title">
-					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&title=<?= urlencode($item['title']) ?>">
+					<a href="article.php?wiki=<?= urlencode(get_wiki()) ?>&title=<?= urlencode($item['name']) ?>">
 						<?= html($item['title']) ?>
 					</a>
 				</div>

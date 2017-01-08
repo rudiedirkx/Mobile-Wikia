@@ -3,6 +3,9 @@ html {
 	max-width: 800px;
 }
 h1, h2, h3 {
+	margin: .5em 0;
+}
+h1:first-child, h2:first-child, h3:first-child, p:first-child {
 	margin-top: 0;
 }
 input, textarea, select {
@@ -48,6 +51,7 @@ button:default {
 img[src^="data:"][data-image-key] {
 	display: none;
 }
-.editsection {
+.editsection,
+#toc {
 	display: none;
 }
