@@ -10,7 +10,7 @@ if ( $search = trim(@$_GET['search']) ) {
 		'limit' => 10,
 		'query' => $search,
 	), $error, $info);
-	$results = $response['items'];
+	$results = $response ? $response['items'] : [];
 	foreach ($results as &$result) {
 		$result['name'] = ($p = strpos($result['title'], '#')) ? substr($result['title'], 0, $p) : $result['title'];
 		unset($result);
@@ -37,6 +37,9 @@ include 'tpl.header.php';
 				</div>
 			</li>
 		<? endforeach ?>
+		<? if (!$results): ?>
+			<li>No results...</li>
+		<? endif ?>
 	</ul>
 <? endif ?>
 

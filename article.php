@@ -30,6 +30,7 @@ $html = preg_replace_callback('#href="/wiki/([^"]+)#', function($match) {
 
 	return 'href="article.php?wiki=' . get_wiki() . '&title=' . urlencode($title);
 }, $html);
+$html = preg_replace('# src="/#', ' src="http://' . urlencode(get_wiki()) . '.wikia.com/', $html);
 $html = preg_replace('# srcset=#', ' data-srcset=', $html);
 // $html = preg_replace('# style=".+?"#', '', $html);
 
