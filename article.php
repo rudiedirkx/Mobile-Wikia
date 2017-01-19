@@ -28,7 +28,7 @@ $html = preg_replace_callback('#href="/wiki/([^"]+)#', function($match) {
 	$titles = explode('?', $match[1]);
 	$title = $titles[0];
 
-	return 'href="article.php?wiki=' . get_wiki() . '&title=' . urlencode($title);
+	return 'href="article.php?wiki=' . get_wiki() . '&title=' . $title;
 }, $html);
 $html = preg_replace('# src="/#', ' src="http://' . urlencode(get_wiki()) . '.wikia.com/', $html);
 $html = preg_replace('# srcset=#', ' data-srcset=', $html);
@@ -64,7 +64,7 @@ include 'tpl.header.php';
 
 <details>
 	<summary>Debug</summary>
-	<pre><?= html(print_r($response, 1)) ?></pre>
+	<pre><? /*= html(print_r($response, 1))*/ ?></pre>
 </details>
 
 <?php
