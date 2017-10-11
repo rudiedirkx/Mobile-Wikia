@@ -33,7 +33,7 @@ include 'tpl.header.php';
 			<li class="result-item">
 				<div class="title">
 					<a href="search.php?wiki=<?= urlencode($item['machine_name']) ?>">
-						<?= html($item['title']) ?>
+						<?= html($item['title'] ?: $item['machine_name']) ?>
 					</a>
 				</div>
 				<div class="machine-name">
