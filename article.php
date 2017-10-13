@@ -19,7 +19,12 @@ if ( isset($response['normalized'][0]['to']) ) {
 }
 
 $page = reset($response['pages']);
-$content = $page['revisions'][0]['*'];
+if ( isset($page['revisions'][0]) ) {
+	$content = $page['revisions'][0]['*'];
+}
+else {
+	$content = '<p>Page does not exist.</p>';
+}
 
 $html = $content;
 $html = preg_replace('#</?noscript>#', '', $html);

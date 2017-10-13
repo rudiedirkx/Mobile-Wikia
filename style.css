@@ -55,3 +55,6 @@ img[src^="data:"][data-image-key] {
 #toc {
 	display: none;
 }
+a.new {
+	color: #c00;
+}
