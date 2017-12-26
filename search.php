@@ -2,7 +2,8 @@
 
 require 'inc.bootstrap.php';
 
-requireParams('wiki');
+list($wiki) = requireParams('wiki');
+rememberWiki($wiki);
 
 if ( $search = trim(@$_GET['search']) ) {
 	$response = wikia_get('Search/List', array(

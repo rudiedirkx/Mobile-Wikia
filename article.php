@@ -2,7 +2,8 @@
 
 require 'inc.bootstrap.php';
 
-list(, $title) = requireParams('wiki', 'title');
+list($wiki, $title) = requireParams('wiki', 'title');
+rememberWiki($wiki);
 
 $response = wiki_query(array(
 	'titles' => $title,

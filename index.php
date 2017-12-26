@@ -24,6 +24,8 @@ $_title = 'Search wiki';
 $search and $_title .= ': ' . $search;
 include 'tpl.header.php';
 
+$history = rememberWiki();
+
 ?>
 <? if ($search): ?>
 	<h2>Results</h2>
@@ -38,6 +40,22 @@ include 'tpl.header.php';
 				</div>
 				<div class="machine-name">
 					<?= html($item['machine_name']) ?>
+				</div>
+			</li>
+		<? endforeach ?>
+	</ul>
+<? endif ?>
+
+<? if ($history): ?>
+	<h2>History</h2>
+
+	<ul>
+		<? foreach ($history as $wiki): ?>
+			<li class="result-item">
+				<div class="machine-name">
+					<a href="search.php?wiki=<?= urlencode($wiki) ?>">
+						<?= html($wiki) ?>
+					</a>
 				</div>
 			</li>
 		<? endforeach ?>

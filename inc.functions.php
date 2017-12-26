@@ -54,7 +54,7 @@ function do_redirect( $path, $query = array() ) {
 	header('Location: ' . $url);
 }
 
-function requireParams($param1) {
+function requireParams( $param1 ) {
 	$want = array_flip(func_get_args());
 	$have = array_filter($_GET);
 	$miss = array_diff_key($want, $have);
@@ -69,8 +69,19 @@ function requireParams($param1) {
 	return $values;
 }
 
-function missingParams($params) {
+function missingParams( $params ) {
 	exit('Missing params: ' . html(implode(', ', $params)));
+}
+
+function rememberWiki( $wiki = null ) {
+	$current = (string) @$_COOKIE['wikia_history'];
+	$wikis = array_filter(explode(',', $current));
+	$wiki and $wikis[] = $wiki;
+	$wikis = array_unique($wikis);
+	sort($wikis);
+	$new = implode(',', $wikis);
+	$wiki and $new != $current and setcookie('wikia_history', $new, strtotime('+1 year'));
+	return $wikis;
 }
 
 function html( $text ) {
