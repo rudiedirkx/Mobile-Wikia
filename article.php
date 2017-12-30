@@ -5,6 +5,9 @@ require 'inc.bootstrap.php';
 list($wiki, $title) = requireParams('wiki', 'title');
 rememberWiki($wiki);
 
+$from = @$_GET['from'];
+$noredirect = !empty($_GET['noredirect']);
+
 $response = wiki_query(array(
 	'titles' => $title,
 	'prop' => 'revisions',
@@ -40,12 +43,23 @@ $html = preg_replace('# src="/#', ' src="http://' . urlencode(get_wiki()) . '.wi
 $html = preg_replace('# srcset=#', ' data-srcset=', $html);
 // $html = preg_replace('# style=".+?"#', '', $html);
 
-if ( preg_match('#^REDIRECT (.+)$#', trim(strip_tags($html)), $match) ) {
-	do_redirect('article', array(
-		'wiki' => get_wiki(),
-		'title' => $match[1],
-	));
-	exit;
+if ( !$noredirect ) {
+	if ( preg_match('#^redirect (.+)$#i', trim(strip_tags($html)), $match) ) {
+		do_redirect('article', [
+			'wiki' => get_wiki(),
+			'title' => $match[1],
+			'from' => $title,
+		]);
+		exit;
+	}
+	elseif ( trim(strip_tags($html)) == 'redirect' ) {
+		do_redirect('article', [
+			'wiki' => get_wiki(),
+			'title' => 'Category:' . $title,
+			'from' => $title,
+		]);
+		exit;
+	}
 }
 
 $_title = $title;
@@ -62,16 +76,23 @@ include 'tpl.header.php';
 	<a href="http://<?= urlencode(get_wiki()) ?>.wikia.com/wiki/<?= urlencode(str_replace(' ', '_', $title)) ?>">
 		Go to Wikia
 	</a>
+	<? if ($from): ?>
+		| <a href="<?= get_url('article', ['wiki' => get_wiki(), 'title' => $from, 'noredirect' => 1]) ?>">
+			Redirected from <em><?= html($from) ?></em>
+		</a>
+	<? endif ?>
 </p>
 
 <?= $html ?>
 
+<?php /** ?>
 <hr />
 
 <details>
 	<summary>Debug</summary>
-	<pre><? /*= html(print_r($response, 1))*/ ?></pre>
+	<pre><?= html(print_r($response, 1)) ?></pre>
 </details>
+<?php /**/ ?>
 
 <?php
 
