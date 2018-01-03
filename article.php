@@ -30,6 +30,13 @@ else {
 	$content = '<p>Page does not exist.</p>';
 }
 
+if ( preg_match('#^Category:(.+)$#', $title, $match) ) {
+	$articles = wiki_category_articles($match[1]);
+	$content .= '<h2>Pages in <em>' . html($match[1]) . '</em></h2><ul>' . implode(array_map(function($item) {
+		return '<li><a href="article.php?wiki=' . urlencode(get_wiki()) . '&title=' . urlencode($item['title']) . '">' . html($item['title']) . '</a></li>';
+	}, $articles['categorymembers'])) . '</ul>';
+}
+
 $html = $content;
 $html = preg_replace('#</?noscript>#', '', $html);
 $html = preg_replace('#<(script)[\s\S]+?</\1>#', '', $html);
@@ -85,14 +92,14 @@ include 'tpl.header.php';
 
 <?= $html ?>
 
-<?php /** ?>
-<hr />
+<? if (WIKIA_DEBUG): ?>
+	<hr />
 
-<details>
-	<summary>Debug</summary>
-	<pre><?= html(print_r($response, 1)) ?></pre>
-</details>
-<?php /**/ ?>
+	<details>
+		<summary>Debug</summary>
+		<pre><?= html(print_r($response, 1)) ?></pre>
+	</details>
+<? endif ?>
 
 <?php
 

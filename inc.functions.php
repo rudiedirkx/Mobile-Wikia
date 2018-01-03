@@ -101,6 +101,21 @@ function get_wiki() {
 	}
 }
 
+function wiki_category_articles( $category ) {
+	$url = wikia_url('api.php', array(
+		'action' => 'query',
+		'format' => 'json',
+		'list' => 'categorymembers',
+		'cmtitle' => 'Category:' . $category,
+	));
+
+	$ch = wikia_curl($url, 'GET', $info);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-agent: Mobile Wikia'));
+
+	$response = wikia_response($ch, $error, $info);
+	return $response['query'];
+}
+
 function wiki_query( $query, &$error = null, &$info = null ) {
 	$url = wikia_url('api.php', $query + array(
 		'action' => 'query',

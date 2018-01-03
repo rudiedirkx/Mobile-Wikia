@@ -1,0 +1,13 @@
+{
+    "name": "rdx/wikia",
+    "description": "Very simple mobile Wikia",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rudie Dirkx",
+            "email": "github@hotblocks.nl"
+        }
+    ],
+    "require": {}
+}
