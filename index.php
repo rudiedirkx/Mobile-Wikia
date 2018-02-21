@@ -47,7 +47,7 @@ $history = rememberWiki();
 <? endif ?>
 
 <? if ($history): ?>
-	<h2>History</h2>
+	<h2>Previous wikis</h2>
 
 	<ul>
 		<? foreach ($history as $wiki): ?>
