@@ -8,7 +8,7 @@ if ( $search = trim(@$_GET['search']) ) {
 		'limit' => 10,
 		'query' => $search,
 	), $error, $info);
-	$results = $response['items'];
+	$results = array_filter($response['items']);
 
 	foreach ( $results as &$item ) {
 		$item['machine_name'] = substr(
