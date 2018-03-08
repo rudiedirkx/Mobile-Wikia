@@ -48,8 +48,8 @@ $html = preg_replace_callback('#href="/wiki/([^"]+)#', function($match) {
 }, $html);
 $html = preg_replace('# src="/#', ' src="http://' . urlencode(get_wiki()) . '.wikia.com/', $html);
 $html = preg_replace('# srcset=#', ' data-srcset=', $html);
-$html = preg_replace('#([\'";\s])width:#', '$1x-width:', $html);
-// $html = preg_replace('# style=".+?"#', '', $html);
+// $html = preg_replace('#([\'";\s])width:#', '$1x-width:', $html);
+$html = preg_replace('# style=#', ' data-style=', $html);
 
 if ( !$noredirect ) {
 	if ( preg_match('#^redirect (.+)$#i', trim(strip_tags($html)), $match) ) {
