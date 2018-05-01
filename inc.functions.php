@@ -146,7 +146,9 @@ function wikia_url( $resource, $query = null ) {
 	return $url;
 }
 
-function wikia_curl( $url, $method = '', &$info = null ) {
+function wikia_curl( $url, $method, &$info = null ) {
+	$GLOBALS['_requests'][] = "$method $url";
+
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

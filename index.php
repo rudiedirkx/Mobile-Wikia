@@ -3,19 +3,16 @@
 require 'inc.bootstrap.php';
 
 if ( $search = trim(@$_GET['search']) ) {
-	$response = wikia_get('Search/CrossWiki', array(
-		'expand' => 1,
+	$response = wikia_get('Wikis/ByString', array(
+		'string' => $search,
 		'limit' => 10,
-		'query' => $search,
+		'batch' => 1,
+		'includeDomain' => 1,
 	), $error, $info);
 	$results = array_filter($response['items']);
 
 	foreach ( $results as &$item ) {
-		$item['machine_name'] = substr(
-			$item['url'],
-			$p1 = strpos($item['url'], '//') + 2,
-			strpos($item['url'], '.') - $p1
-		);
+		$item['machine_name'] = preg_replace('#\.wikia\.com$#', '', $item['domain']);
 		unset($item);
 	}
 }
@@ -35,7 +32,7 @@ $history = rememberWiki();
 			<li class="result-item">
 				<div class="title">
 					<a href="search.php?wiki=<?= urlencode($item['machine_name']) ?>">
-						<?= html($item['title'] ?: $item['machine_name']) ?>
+						<?= html($item['name'] ?: $item['machine_name']) ?>
 					</a>
 				</div>
 				<div class="machine-name">
