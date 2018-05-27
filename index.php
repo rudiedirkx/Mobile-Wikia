@@ -3,18 +3,7 @@
 require 'inc.bootstrap.php';
 
 if ( $search = trim(@$_GET['search']) ) {
-	$response = wikia_get('Wikis/ByString', array(
-		'string' => $search,
-		'limit' => 10,
-		'batch' => 1,
-		'includeDomain' => 1,
-	), $error, $info);
-	$results = array_filter($response['items']);
-
-	foreach ( $results as &$item ) {
-		$item['machine_name'] = preg_replace('#\.wikia\.com$#', '', $item['domain']);
-		unset($item);
-	}
+	$results = wiki_search_wikis($search);
 }
 
 $_title = 'Search wiki';
@@ -31,12 +20,12 @@ $history = rememberWiki();
 		<? foreach ($results as $item): ?>
 			<li class="result-item">
 				<div class="title">
-					<a href="search.php?wiki=<?= urlencode($item['machine_name']) ?>">
-						<?= html($item['name'] ?: $item['machine_name']) ?>
+					<a href="search.php?wiki=<?= urlencode($item['name']) ?>">
+						<?= html($item['title'] ?: $item['name']) ?>
 					</a>
 				</div>
 				<div class="machine-name">
-					<?= html($item['machine_name']) ?>
+					<?= html($item['name']) ?>
 				</div>
 			</li>
 		<? endforeach ?>

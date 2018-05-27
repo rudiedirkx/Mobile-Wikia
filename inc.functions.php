@@ -1,48 +1,5 @@
 <?php
 
-// use rdx\wikiparser\Document;
-// use rdx\wikiparser\Parser;
-// use rdx\wikiparser\Linker;
-
-// class MobileWikiaLinker extends Linker {
-// 	public function articleURL( $article ) {
-// 		return 'article.php?wiki=' . get_wiki() . '&title=' . ucfirst($article);
-// 	}
-// }
-
-function wiki_parse( $content ) {
-	return $content;
-
-	$document = new Document(
-		new Parser,
-		new MobileWikiaLinker
-	);
-
-	$document->parseSimple($content, array(
-		'Quote' => function($properties) {
-			return '<blockquote><p>' . $properties[0] . '</p><p><em>' . $properties[1] . '</em></p></blockquote>';
-		},
-		'pic' => function($properties) {
-			return ' &lt;' . $properties[1] . '&gt; ';
-		},
-		'Recipe' => function($properties) {
-			$input = array();
-			foreach (array('', '1', '2', '3', '4') as $name) {
-				if ( isset($properties['item' . $name]) ) {
-					$count = isset($properties['count' . $name]) ? ' x' . $properties['count' . $name] : '';
-					$input[] = $properties['item' . $name] . $count;
-				}
-			}
-			$input = array_merge($input, array_keys(array_filter($properties, function($value) {
-				return $value === 'yes';
-			})));
-			return '<p>&lt;' . implode(' + ', $input) . ' = ' . $properties['result'] . '&gt;</p> ';
-		},
-	));
-
-	return $document;
-}
-
 function get_url( $path, $query = array() ) {
 	$query = $query ? '?' . http_build_query($query) : '';
 	$path = $path ? $path . '.php' : basename($_SERVER['SCRIPT_NAME']);
@@ -94,11 +51,116 @@ function get_wiki() {
 	}
 
 	if ( isset($_GET['wiki']) && is_string($_GET['wiki']) ) {
-		if ( preg_match('#^[a-z][\w\d-]+$#i', $_GET['wiki']) ) {
-			define('WIKIA_WIKI', strtolower($_GET['wiki']));
-			return WIKIA_WIKI;
+		define('WIKIA_WIKI', $_GET['wiki']);
+		return WIKIA_WIKI;
+	}
+}
+
+function wiki_search_wikis( $search ) {
+	$results = [];
+
+	$response = wikia_get('Wikis/ByString', array(
+		'string' => $search,
+		'limit' => 10,
+		'batch' => 1,
+		'includeDomain' => 1,
+	), $error, $info);
+	foreach ( $response['items'] as $item ) {
+		if ( $item && isset($item['domain']) ) {
+			$name = preg_replace('#\.wikia\.com$#', '', $item['domain']);
+			$results[] = [
+				'source' => 'wikia',
+				'title' => @$item['name'] ?: $name,
+				'name' => $name,
+			];
 		}
 	}
+
+	return $results;
+}
+
+function wiki_search_articles( $search ) {
+	$results = [];
+
+	$response = wikia_get('Search/List', array(
+		'expand' => 1,
+		'limit' => 10,
+		'query' => $search,
+	), $error, $info);
+	foreach ( $response['items'] as $item ) {
+		if ( $item && isset($item['title']) ) {
+			$title = $item['title'];
+			$results[] = [
+				'name' => ($p = strpos($title, '#')) ? substr($title, 0, $p) : $title,
+				'title' => $title,
+			];
+		}
+	}
+
+	return $results;
+}
+
+function wiki_get_article( $name ) {
+	$response = wiki_query(array(
+		'titles' => $name,
+		'prop' => 'revisions',
+		'rvprop' => 'content',
+		'rvparse' => 1,
+	), $error, $info);
+
+	if ( isset($response['normalized'][0]['to']) ) {
+		return [
+			'redirect' => $response['normalized'][0]['to'],
+		];
+	}
+
+	$page = reset($response['pages']);
+
+	if ( isset($page['revisions'][0]) ) {
+		$content = $page['revisions'][0]['*'];
+
+		if ( preg_match('#^Category:(.+)$#', $name, $match) ) {
+			$articles = wiki_category_articles($match[1]);
+			$content .= '<h2>Pages in <em>' . html($match[1]) . '</em></h2><ul>' . implode(array_map(function($item) {
+				return '<li><a href="article.php?wiki=' . urlencode(get_wiki()) . '&title=' . urlencode($item['title']) . '">' . html($item['title']) . '</a></li>';
+			}, $articles['categorymembers'])) . '</ul>';
+		}
+
+		$plain = trim(strip_tags($content));
+		if ( preg_match('#^redirect (.+)$#i', $plain, $match) ) {
+			return [
+				'redirect' => $match[1],
+			];
+		}
+		elseif ( $plain == 'redirect' ) {
+			return [
+				'redirect' => 'Category:' . $title,
+			];
+		}
+	}
+	else {
+		$content = '<p>Page does not exist.</p>';
+	}
+
+	return [
+		'title' => $name,
+		'content' => $content,
+	];
+}
+
+function wiki_markup( $html ) {
+	$html = preg_replace('#</?noscript>#', '', $html);
+	$html = preg_replace('#<(script)[\s\S]+?</\1>#', '', $html);
+	$html = preg_replace_callback('#href="/wiki/([^"]+)#', function($match) {
+		$titles = explode('?', $match[1]);
+		$title = $titles[0];
+
+		return 'href="article.php?wiki=' . get_wiki() . '&title=' . $title;
+	}, $html);
+	$html = preg_replace('# src="/#', ' src="http://' . urlencode(get_wiki()) . '.wikia.com/', $html);
+	$html = preg_replace('# srcset=#', ' data-srcset=', $html);
+	$html = preg_replace('# style=#', ' data-style=', $html);
+	return $html;
 }
 
 function wiki_category_articles( $category ) {
@@ -141,7 +203,7 @@ function wikia_get( $resource, $query = null, &$error = null, &$info = null ) {
 
 function wikia_url( $resource, $query = null ) {
 	$wiki = get_wiki() ? get_wiki() : 'www';
-	$url = 'http://' . $wiki . '.wikia.com/' . $resource;
+	$url = 'https://' . $wiki . '.wikia.com/' . $resource;
 	$query && $url .= '?' . http_build_query($query);
 	return $url;
 }

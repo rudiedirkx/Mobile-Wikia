@@ -6,16 +6,7 @@ list($wiki) = requireParams('wiki');
 rememberWiki($wiki);
 
 if ( $search = trim(@$_GET['search']) ) {
-	$response = wikia_get('Search/List', array(
-		'expand' => 1,
-		'limit' => 10,
-		'query' => $search,
-	), $error, $info);
-	$results = $response ? $response['items'] : [];
-	foreach ($results as &$result) {
-		$result['name'] = ($p = strpos($result['title'], '#')) ? substr($result['title'], 0, $p) : $result['title'];
-		unset($result);
-	}
+	$results = wiki_search_articles($search);
 }
 
 $_title = 'Search article';
