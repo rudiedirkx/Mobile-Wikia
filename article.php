@@ -11,7 +11,7 @@ $article = wiki_get_article($title);
 if ( isset($article['redirect']) ) {
 	do_redirect('article', array(
 		'wiki' => get_wiki(),
-		'title' => $response['normalized'][0]['to'],
+		'title' => $article['redirect'],
 	));
 	exit;
 }
