@@ -87,7 +87,7 @@ function wiki_search_articles( $search ) {
 		'limit' => 10,
 		'query' => $search,
 	), $error, $info);
-	foreach ( $response['items'] as $item ) {
+	foreach ( (array) @$response['items'] as $item ) {
 		if ( $item && isset($item['title']) ) {
 			$title = $item['title'];
 			$results[] = [
@@ -244,7 +244,7 @@ function wikia_response( $ch, &$error = null, &$info = null ) {
 		$info['error'] = ($json = @json_decode($body, true)) ? $json : null;
 	}
 
-	$response = $success ? @json_decode($body, true) : false;
+	$response = @json_decode($body, true) ?: false;
 
 	return $response;
 }
